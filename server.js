@@ -6,8 +6,8 @@ http
   .createServer((request, response) => {
     var addr = request.url,
       q = url.parse(addr, true);
-    (filePath = ""),
-    response.end("Hello\n" + addr);
+    filePath = "";
+    // response.end("Hello\n" + addr);
 
     if (q.pathname.includes("documentation")) {
       filePath = __dirname + "/documentation.html";
@@ -34,6 +34,9 @@ http
         } else {
           console.log(addr + " Added to log.");
         }
+        response.writeHead(200, { "Content-Type": "text/html" });
+        // response.write(data);
+        response.end();
       }
     );
   })
