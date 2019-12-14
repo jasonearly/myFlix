@@ -131,32 +131,32 @@ app.get("/movies/:title", (req, res) => {
 });
 
 //Return data about a genre (description) by name/title (e.g., “Thriller”)
-// app.get("/movies/:genre", (req, res) => {
-//   res.send("Successful GET request returning data on movies of the genre");
-// });
+app.get("/movies/genre/:genre", (req, res) => {
+  res.send("Successful GET request returning data on movies of the genre");
+});
 
 //Return data about a director (bio, birth year, death year) by name
-// app.get("/movies/:director", (req, res) => {
-//   res.send("Successful GET request returning data on director");
-// });
+app.get("/movies/director/:director", (req, res) => {
+  res.send("Successful GET request returning data on director");
+});
 
 //Allow new users to register
-// app.post("/users", (req, res) => {
-//   let newUser = req.body;
-//
-//   if (!newUser.name) {
-//     const message = "Missing name in request body";
-//     res.status(400).send(message);
-//   } else {
-//     newUser.id = uuid.v4();
-//     Users.push(newUser);
-//     res.status(201).send(newUser);
-//   }
-// });
+app.post("/users", (req, res) => {
+  let newUser = req.body;
+
+  if (!newUser.userName) {
+    const message = "Missing name in request body";
+    res.status(400).send(message);
+  } else {
+    newUser.id = uuid.v4();
+    Users.push(newUser);
+    res.status(201).send(newUser);
+  }
+});
 
 //Allow users to update their user info (username, password, email, date of birth)
 // Update the "grade" of a student by student name/class name
-// app.put("/students/:name/:class/:grade", (req, res) => {
+// app.put("/users/:id	", (req, res) => {
 //   let student = Students.find(student => {
 //     return student.name === req.params.name;
 //   });
@@ -182,7 +182,7 @@ app.get("/movies/:title", (req, res) => {
 
 //Allow users to add a movie to their list of favorites
 // add the "grade" of a student by student name/class name
-// app.post("/students/:name/:class/:grade", (req, res) => {
+// app.post("/users/[ID]/movies/:title	", (req, res) => {
 //   let student = Students.find(student => {
 //     return student.name === req.params.name;
 //   });
@@ -207,7 +207,7 @@ app.get("/movies/:title", (req, res) => {
 // });
 
 //Allow users to remove a movie from their list of favorites
-// app.delete("/users/:id", (req, res) => {
+// app.delete("/users/[ID]/movies/:title	", (req, res) => {
 //   let user = Users.find(user => {
 //     return user.id === req.params.id;
 //   });
