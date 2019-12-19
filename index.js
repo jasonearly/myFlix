@@ -280,6 +280,24 @@ app.post("/users/:Username/Movies/:MovieID", function(req, res) {
 //   }
 // });
 
+app.delete("/users/:Username/Movies/:MovieID", function(req, res) {
+  Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    {
+      $pull: { FavoriteMovies: req.params.MovieID }
+    },
+    { new: true }, // This line makes sure that the updated document is returned
+    function(err, updatedUser) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      } else {
+        res.json(updatedUser);
+      }
+    }
+  );
+});
+
 //Allow existing users to deregister
 // Delete a user by username
 app.delete("/users/:Username", function(req, res) {
