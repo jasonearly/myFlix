@@ -10,6 +10,9 @@ const Models = require("./models.js");
 const Movies = Models.Movie;
 const Users = Models.User;
 
+const passport = require("passport");
+require("./passport");
+
 mongoose.connect("mongodb://localhost:27017/myFlixDB", {
   useNewUrlParser: true
 });
@@ -17,103 +20,106 @@ mongoose.connect("mongodb://localhost:27017/myFlixDB", {
 app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(morgan("common"));
+
+const auth = require("./auth")(app);
+
 app.use(function(err, req, res, next) {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
 
-let movies = [
-  {
-    title: "Harry Potter and the Sorcerer's Stone",
-    description: "",
-    genre: "",
-    director: "",
-    imageURL: "",
-    featured: ""
-  },
-  {
-    title: "Lord of the Rings",
-    description: "",
-    genre: "Fantasy",
-    director: "Peter Jackson",
-    imageURL: "",
-    featured: ""
-  },
-  {
-    title: "Fight Club",
-    description: "",
-    genre: "",
-    director: "",
-    imageURL: "",
-    featured: ""
-  },
-  {
-    title: "Taxi Driver",
-    description: "",
-    genre: "",
-    director: "",
-    imageURL: "",
-    featured: ""
-  },
-  {
-    title: "Goodfellas",
-    description: "",
-    genre: "",
-    director: "",
-    imageURL: "",
-    featured: ""
-  },
-  {
-    title: "Tron",
-    description: "",
-    genre: "",
-    director: "",
-    imageURL: "",
-    featured: ""
-  },
-  {
-    title: "Her",
-    description: "",
-    genre: "",
-    director: "",
-    imageURL: "",
-    featured: ""
-  },
-  {
-    title: "Casino",
-    description: "",
-    genre: "",
-    director: "",
-    imageURL: "",
-    featured: ""
-  },
-  {
-    title: "Star Wars",
-    description: "",
-    genre: "",
-    director: "",
-    imageURL: "",
-    featured: ""
-  },
-  {
-    title: "Wall-e",
-    description: "",
-    genre: "",
-    director: "",
-    imageURL: "",
-    featured: ""
-  }
-];
-
-let users = [
-  {
-    username: "",
-    password: "",
-    email: "",
-    dateOfBirth: "",
-    favorites: []
-  }
-];
+// let movies = [
+//   {
+//     title: "Harry Potter and the Sorcerer's Stone",
+//     description: "",
+//     genre: "",
+//     director: "",
+//     imageURL: "",
+//     featured: ""
+//   },
+//   {
+//     title: "Lord of the Rings",
+//     description: "",
+//     genre: "Fantasy",
+//     director: "Peter Jackson",
+//     imageURL: "",
+//     featured: ""
+//   },
+//   {
+//     title: "Fight Club",
+//     description: "",
+//     genre: "",
+//     director: "",
+//     imageURL: "",
+//     featured: ""
+//   },
+//   {
+//     title: "Taxi Driver",
+//     description: "",
+//     genre: "",
+//     director: "",
+//     imageURL: "",
+//     featured: ""
+//   },
+//   {
+//     title: "Goodfellas",
+//     description: "",
+//     genre: "",
+//     director: "",
+//     imageURL: "",
+//     featured: ""
+//   },
+//   {
+//     title: "Tron",
+//     description: "",
+//     genre: "",
+//     director: "",
+//     imageURL: "",
+//     featured: ""
+//   },
+//   {
+//     title: "Her",
+//     description: "",
+//     genre: "",
+//     director: "",
+//     imageURL: "",
+//     featured: ""
+//   },
+//   {
+//     title: "Casino",
+//     description: "",
+//     genre: "",
+//     director: "",
+//     imageURL: "",
+//     featured: ""
+//   },
+//   {
+//     title: "Star Wars",
+//     description: "",
+//     genre: "",
+//     director: "",
+//     imageURL: "",
+//     featured: ""
+//   },
+//   {
+//     title: "Wall-e",
+//     description: "",
+//     genre: "",
+//     director: "",
+//     imageURL: "",
+//     featured: ""
+//   }
+// ];
+//
+// let users = [
+//   {
+//     username: "",
+//     password: "",
+//     email: "",
+//     dateOfBirth: "",
+//     favorites: []
+//   }
+// ];
 
 //Get Home destination
 app.get("/", function(req, res) {
@@ -126,8 +132,14 @@ app.get("/documentation", function(req, res) {
 });
 
 //Return a list of ALL movies to the user
-app.get("/movies", function(req, res) {
-  res.json(movies);
+app.get("/movies", passport.authenticate('jwt', { session: false }), function(req, res) {
+  Movies.find()
+    .then(function(movies) {
+      res.status(201).json(movies);
+    }).catch(function(error) {
+      console.error(error);
+      res.status(500).send("Error: " + error);
+    });
 });
 
 // Return data (description, genre, director, image URL, whether it’s featured or not) about a single movie by title to the user
