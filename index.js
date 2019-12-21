@@ -13,6 +13,9 @@ const Users = Models.User;
 const passport = require("passport");
 require("./passport");
 
+const cors = require("cors");
+app.use(cors());
+
 mongoose.connect("mongodb://localhost:27017/myFlixDB", {
   useNewUrlParser: true
 });
@@ -27,6 +30,24 @@ app.use(function(err, req, res, next) {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
+
+var allowedOrigins = ["http://localhost:8080", "http://testsite.com"];
+
+app.use(
+  cors({
+    origin: function(origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        // If a specific origin isn’t found on the list of allowed origins
+        var message =
+          "The CORS policy for this application doesn’t allow access from origin " +
+          origin;
+        return callback(new Error(message), false);
+      }
+      return callback(null, true);
+    }
+  })
+);
 
 // let movies = [
 //   {
@@ -132,11 +153,15 @@ app.get("/documentation", function(req, res) {
 });
 
 //Return a list of ALL movies to the user
-app.get("/movies", passport.authenticate('jwt', { session: false }), function(req, res) {
+app.get("/movies", passport.authenticate("jwt", { session: false }), function(
+  req,
+  res
+) {
   Movies.find()
     .then(function(movies) {
       res.status(201).json(movies);
-    }).catch(function(error) {
+    })
+    .catch(function(error) {
       console.error(error);
       res.status(500).send("Error: " + error);
     });
@@ -173,14 +198,16 @@ app.get("/movies/director/:director", (req, res) => {
  Birthday : Date
 }*/
 app.post("/users", function(req, res) {
-  Users.findOne({ Username: req.body.Username })
+  var hashedPassword = Users.hashPassword(req.body.Password);
+  Users.findOne({ Username: req.body.Username }) // Search to see if a user with the requested username already exists
     .then(function(user) {
       if (user) {
+        //If the user is found, send a response that it already exists
         return res.status(400).send(req.body.Username + " already exists");
       } else {
         Users.create({
           Username: req.body.Username,
-          Password: req.body.Password,
+          Password: hashedPassword,
           Email: req.body.Email,
           Birthday: req.body.Birthday
         })
