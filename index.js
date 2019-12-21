@@ -18,9 +18,15 @@ app.use(cors());
 
 const { check, validationResult } = require("express-validator");
 
-mongoose.connect("mongodb://localhost:27017/myFlixDB", {
-  useNewUrlParser: true
-});
+// mongoose.connect("mongodb://localhost:27017/myFlixDB", {
+//   useNewUrlParser: true
+// });
+mongoose.connect(
+  "mongodb+srv://myFlixDBAdmin:R92rJChewaBdTKCm@myflixdb-nxdnb.mongodb.net/myFlixDB?retryWrites=true&w=majority",
+  {
+    useNewUrlParser: true
+  }
+);
 
 app.use(express.static("public"));
 app.use(bodyParser.json());
