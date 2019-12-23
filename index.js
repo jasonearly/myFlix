@@ -39,7 +39,7 @@ app.use(function(err, req, res, next) {
   res.status(500).send("Something broke!");
 });
 
-var allowedOrigins = ["http://localhost:8080", "http://testsite.com"];
+var allowedOrigins = ["http://localhost:1234"];
 
 app.use(
   cors({
