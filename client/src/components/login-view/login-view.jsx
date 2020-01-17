@@ -6,6 +6,7 @@ import Col from "react-bootstrap/Col";
 
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+//import { RegistrationView } from "../registration-view/registration-view";
 
 import "./login-view.scss";
 
@@ -48,12 +49,15 @@ export function LoginView(props) {
                 onChange={e => setPassword(e.target.value)}
               />
             </Form.Group>
-            <Button type="button" onClick={handleSubmit} variant="secondary">
+            <Button type="button" onClick={handleSubmit} variant="primary">
               Sign In
             </Button>
-            <Button type="button" onClick={() => onClick()} variant="link">
+
+            <Button variant="link" onClick={() => props.onClick()}>
               Register
             </Button>
+
+            {/*button changes state of MainView to display RegistrationView*/}
           </Form>
         </Col>
       </Row>
